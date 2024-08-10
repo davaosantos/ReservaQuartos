@@ -1,0 +1,6 @@
+POST    /rooms/add            controllers.ReservaController.addRoom()
+DELETE  /rooms/remove/:id      controllers.ReservaController.removeRoom(id: Int)
+POST    /reservations/book    controllers.ReservaController.bookRoom()
+GET     /reservations/occupancy/:date  controllers.ReservaController.getOccupancy(date: String)
+GET     /               controllers.HomeController.index()
+

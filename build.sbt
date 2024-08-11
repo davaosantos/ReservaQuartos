@@ -12,7 +12,7 @@ lazy val root = (project in file("."))
       "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % Test,
       "com.typesafe.play" %% "play-slick" % "5.1.0",      // Integração do Play com Slick
       "com.typesafe.slick" %% "slick-hikaricp" % "3.4.1",  // HikariCP para gerenciamento de conexões
-      "com.h2database" % "h2" % "2.1.210"  // Remova % Test para uso normal
+      "mysql" % "mysql-connector-java" % "8.0.32"  // Conector MySQL
     )
   )
 

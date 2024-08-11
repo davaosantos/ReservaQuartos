@@ -16,20 +16,6 @@ class ReservaService @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
   private val quartos = TableQuery[Quarto]
   private val reservas = TableQuery[Reserva]
   private val limpezas = TableQuery[Limpeza]
-  def initializeSchema(): Unit = {
-    val setup = DBIO.seq(
-      quartos.schema.createIfNotExists
-    )
-
-    db.run(setup).onComplete {
-      case scala.util.Success(_) => println("Schema setup completed successfully")
-      case scala.util.Failure(e) => println(s"Schema setup failed: ${e.getMessage}")
-    }
-  }
-
-  // Chame esta função ao iniciar a aplicação
-  initializeSchema()
-
   def addRoom(numero: Int, descricao: Option[String], capacidade: Int): Future[Int] = {
     val action = (for {
       _ <- quartos += ((0, numero, descricao, capacidade))

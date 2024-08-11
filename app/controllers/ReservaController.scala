@@ -21,15 +21,15 @@ class ReservaController @Inject()(val controllerComponents: ControllerComponents
     request.body.validate[QuartoDTO].fold(
       errors => Future.successful(BadRequest(JsError.toJson(errors))),
       quarto => reservaService.addRoom(quarto.numero, quarto.descricao, quarto.capacidade).map { _ =>
-        Created(s"Room added with number ${quarto.numero}")
+        Created(s"Quarto adicionado , numero :  ${quarto.numero}")
       }
     )
   }
 
   def removeRoom(id: Int): Action[AnyContent] = Action.async {
     reservaService.removeRoom(id).map { count =>
-      if (count > 0) Ok(s"Room $id removed")
-      else NotFound("Room not found")
+      if (count > 0) Ok(s"Room $id Removido")
+      else NotFound("Quarto não encontrado")
     }
   }
 
@@ -37,7 +37,7 @@ class ReservaController @Inject()(val controllerComponents: ControllerComponents
     request.body.validate[ReservaDTO].fold(
       errors => Future.successful(BadRequest(JsError.toJson(errors))),
       reserva => reservaService.bookRoom(reserva.idQuarto, reserva.idHospede, reserva.dataInicio, reserva.dataFim).map { _ =>
-        Created(s"Reservation made for room ${reserva.idQuarto}")
+        Created(s"Reserva criada para o quarto: ${reserva.idQuarto}")
       }
     )
   }
@@ -51,7 +51,7 @@ class ReservaController @Inject()(val controllerComponents: ControllerComponents
         else NoContent
       }
     } catch {
-      case _: Exception => Future.successful(BadRequest("Invalid date format. Please use YYYY-MM-DD."))
+      case _: Exception => Future.successful(BadRequest("Formato de data inválido. Use YYYY-MM-DD."))
     }
   }
 }

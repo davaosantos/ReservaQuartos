@@ -1,3 +1,3 @@
 package dto
 
-case class QuartoDTO(id: Int, numero: Int, descricao: Option[String], capacidade: Int)
+case class QuartoDTO(numero: Int, descricao: Option[String], capacidade: Int)

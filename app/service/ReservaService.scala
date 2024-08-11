@@ -6,6 +6,7 @@ import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 
 import java.sql.Date
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -16,7 +17,7 @@ class ReservaService @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
   private val quartos = TableQuery[Quarto]
   private val reservas = TableQuery[Reserva]
   private val limpezas = TableQuery[Limpeza]
-  def addRoom(numero: Int, descricao: Option[String], capacidade: Int): Future[Int] = {
+  def adicionaInventario(numero: Int, descricao: Option[String], capacidade: Int): Future[Int] = {
     val action = (for {
       _ <- quartos += ((0, numero, descricao, capacidade))
     } yield 1).transactionally
@@ -24,7 +25,7 @@ class ReservaService @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
     db.run(action)
   }
 
-  def removeRoom(id: Int): Future[Int] = {
+  def removeQuarto(id: Int): Future[Int] = {
     val action = for {
       count <- quartos.filter(_.id === id).delete
     } yield count
@@ -32,7 +33,7 @@ class ReservaService @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
     db.run(action)
   }
 
-  def bookRoom(idQuarto: Int, idHospede: Int, dataInicio: Date, dataFim: Date): Future[Int] = {
+  def reservaQuarto(idQuarto: Int, idHospede: Int, dataInicio: Date, dataFim: Date): Future[Int] = {
     val action = for {
       conflictingReservations <- reservas.filter(r =>
         r.idQuarto === idQuarto &&
@@ -51,8 +52,15 @@ class ReservaService @Inject()(dbConfigProvider: DatabaseConfigProvider)(implici
     db.run(action.transactionally)
   }
 
-  def getOccupancy(date: Date): Future[Seq[(Int, Int, Int, Date, Date)]] = {
-    val action = reservas.filter(r => r.dataInicio <= date && r.dataFim >= date).result
-    db.run(action)
+  // Verifica se o quarto está ocupado considerando a janela de limpeza de 4 horas
+  def verificaOcupacao(data: LocalDate): Future[Boolean] = {
+    val dataInicio = java.sql.Date.valueOf(data)
+    val dataFim = java.sql.Date.valueOf(data.plusDays(1)) // Considera o dia todo
+
+    val action = reservas.filter(r =>
+      (r.dataInicio <= dataFim && r.dataFim >= dataInicio)
+    ).result
+
+    db.run(action).map(_.nonEmpty)
   }
 }

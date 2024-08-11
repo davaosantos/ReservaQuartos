@@ -5,7 +5,6 @@ import play.api.libs.json._
 import play.api.mvc._
 import service.ReservaService
 
-import java.sql.Date
 import java.time.LocalDate
 import javax.inject._
 import scala.concurrent.{ExecutionContext, Future}
@@ -17,41 +16,41 @@ class ReservaController @Inject()(val controllerComponents: ControllerComponents
   implicit val hospedeFormat: Format[HospedeDTO] = Json.format[HospedeDTO]
   implicit val reservaFormat: Format[ReservaDTO] = Json.format[ReservaDTO]
 
-  def addRoom(): Action[JsValue] = Action.async(parse.json) { request =>
+  def adicionarQuarto(): Action[JsValue] = Action.async(parse.json) { request =>
     request.body.validate[QuartoDTO].fold(
       errors => Future.successful(BadRequest(JsError.toJson(errors))),
-      quarto => reservaService.addRoom(quarto.numero, quarto.descricao, quarto.capacidade).map { _ =>
+      quarto => reservaService.adicionaInventario(quarto.numero, quarto.descricao, quarto.capacidade).map { _ =>
         Created(s"Quarto adicionado , numero :  ${quarto.numero}")
       }
     )
   }
 
-  def removeRoom(id: Int): Action[AnyContent] = Action.async {
-    reservaService.removeRoom(id).map { count =>
+  def removerQuarto(id: Int): Action[AnyContent] = Action.async {
+    reservaService.removeQuarto(id).map { count =>
       if (count > 0) Ok(s"Room $id Removido")
       else NotFound("Quarto não encontrado")
     }
   }
 
-  def bookRoom(): Action[JsValue] = Action.async(parse.json) { request =>
+  def reservarQuarto(): Action[JsValue] = Action.async(parse.json) { request =>
     request.body.validate[ReservaDTO].fold(
       errors => Future.successful(BadRequest(JsError.toJson(errors))),
-      reserva => reservaService.bookRoom(reserva.idQuarto, reserva.idHospede, reserva.dataInicio, reserva.dataFim).map { _ =>
+      reserva => reservaService.reservaQuarto(reserva.idQuarto, reserva.idHospede, reserva.dataInicio, reserva.dataFim).map { _ =>
         Created(s"Reserva criada para o quarto: ${reserva.idQuarto}")
       }
     )
   }
 
-  def getOccupancy(date: String): Action[AnyContent] = Action.async {
+  def verificaOcupacao(date: String): Action[AnyContent] = Action.async {
     try {
       val localDate = LocalDate.parse(date)
-      val sqlDate = Date.valueOf(localDate)
-      reservaService.getOccupancy(sqlDate).map { occupancy =>
-        if (occupancy.nonEmpty) Ok(Json.toJson(occupancy))
-        else NoContent
+      reservaService.verificaOcupacao(localDate).map { isOccupied =>
+        if (isOccupied) Ok(Json.toJson("Ocupado"))
+        else Ok(Json.toJson("Disponível"))
       }
     } catch {
       case _: Exception => Future.successful(BadRequest("Formato de data inválido. Use YYYY-MM-DD."))
     }
   }
+
 }

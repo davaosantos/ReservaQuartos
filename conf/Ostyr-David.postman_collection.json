@@ -1,0 +1,105 @@
+{
+	"info": {
+		"_postman_id": "9508fdf5-9a32-415d-ac96-b9fc3c3aa6ac",
+		"name": "Ostyr-David",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19890547",
+		"_collection_link": "https://grey-moon-108806.postman.co/workspace/API-Projeto-PI3~6078d93c-3455-4ea0-a00b-a22f142d9ff6/collection/19890547-9508fdf5-9a32-415d-ac96-b9fc3c3aa6ac?action=share&source=collection_link&creator=19890547"
+	},
+	"item": [
+		{
+			"name": "AdicionarQuarto",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 0,\r\n    \"numero\": 101,\r\n    \"descricao\": \"Quarto com vista para o mar\",\r\n    \"capacidade\": 2\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9000/rooms/remove/101",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"rooms",
+						"remove",
+						"101"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "RemoverQuarto",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Reservar",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"idQuarto\": 23,\r\n    \"idHospede\": 3,\r\n    \"dataInicio\": \"2024-11-01\",\r\n    \"dataFim\": \"2025-11-03\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9000/reservas/reservar",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"reservas",
+						"reservar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Ocupacao",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9000/reservas/ocupacao/2024-11-01",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"reservas",
+						"ocupacao",
+						"2024-11-01"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
